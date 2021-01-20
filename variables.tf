@@ -1,218 +1,114 @@
-#Variables declared in this file must be declared in the marketplace.yaml
-#Provide a description to your variables.
+variable "tenancy_ocid" {}
+variable "compartment_ocid" {}
+variable "region" {}
+variable "fingerprint" {}
+variable "private_key_path" {}
+variable "user_ocid" {}
+variable "availablity_domain_name" {}
 
-############################
-#  Hidden Variable Group   #
-############################
-variable "tenancy_ocid" {
+variable "useExistingVcn" {
+  default = "false"
+}
+variable "hide_public_subnet" {
+  default = "true"
+}
+variable "hide_private_subnet" {
+  default = "true"
+}
+variable "VCN_CIDR" {
+  default = "10.0.0.0/16"
+}
+variable "myVcn" {
+  default = " "
 }
 
-variable "region" {
+variable "privateSubnet" {
+  default = " "
 }
 
-###############################################################################
-#  Marketplace Image Listing - information available in the Partner portal    #
-###############################################################################
-variable "mp_subscription_enabled" {
-  description = "Subscribe to Marketplace listing?"
-  type        = bool
-  default     = false
+variable "publicSubnet" {
+  default = " "
 }
 
-variable "mp_listing_id" {
-  // default = "ocid1.appcataloglisting.oc1.."
-  default     = ""
-  description = "Marketplace Listing OCID"
+variable "vcn_dns_label" { 
+  default = "sparkvcn"
 }
 
-variable "mp_listing_resource_id" {
-  // default = "ocid1.image.oc1.."
-  default     = ""
-  description = "Marketplace Listing Image OCID"
+variable "hadoop_version" {
+  default = "2.7.x"
 }
 
-variable "mp_listing_resource_version" {
-  // default = "1.0"
-  default     = ""
-  description = "Marketplace Listing Package/Resource Version"
+variable "use_hive" {
+  default = "false"
 }
 
-############################
-#  Custom Image           #
-############################
-variable "custom_image_id" {
-  default     = "ocid1.image.oc1...."
-  description = "Custom Image OCID"
+variable "build_mode" {
+  default = "Stand Alone"
 }
 
-############################
-#  Compute Configuration   #
-############################
-
-variable "vm_display_name" {
-  description = "Instance Name"
-  default     = "simple-vm"
+variable "enable_block_volumes" {
+  default = "false"
 }
 
-variable "vm_compute_shape" {
-  description = "Compute Shape"
-  default     = "VM.Standard2.2" //2 cores
+variable "worker_instance_shape" {
+#  default = "BM.Standard2.52"
+  default = "VM.Standard2.1"
 }
 
-# only used for E3 Flex shape
-variable "vm_flex_shape_ocpus" {
-  description = "Flex Shape OCPUs"
-  default = 1
+variable "worker_node_count" {
+  default = "3"
 }
 
-variable "availability_domain_name" {
-  default     = ""
-  description = "Availability Domain name, if non-empty takes precedence over availability_domain_number"
+variable "data_blocksize_in_gbs" {
+  default = "700"
 }
 
-variable "availability_domain_number" {
-  default     = 1
-  description = "OCI Availability Domains: 1,2,3  (subject to region availability)"
+variable "block_volumes_per_worker" {
+   default = "1"
 }
 
-variable "ssh_public_key" {
-  description = "SSH Public Key"
+variable "master_instance_shape" {
+#  default = "BM.Standard2.52"
+  default = "VM.Standard2.1"
 }
 
-variable "hostname_label" {
-  default     = "simple"
-  description = "DNS Hostname Label. Must be unique across all VNICs in the subnet and comply with RFC 952 and RFC 1123."
-}
-
-############################
-#  Network Configuration   #
-############################
-
-variable "network_strategy" {
-  #default = "Use Existing VCN and Subnet"
-  default = "Create New VCN and Subnet"
-}
-
-variable "vcn_id" {
-  default = ""
-}
-
-variable "vcn_display_name" {
-  description = "VCN Name"
-  default     = "simple-vcn"
-}
-
-variable "vcn_cidr_block" {
-  description = "VCN CIDR"
-  default     = "10.0.0.0/16"
-}
-
-variable "vcn_dns_label" {
-  description = "VCN DNS Label"
-  default     = "simplevcn"
-}
-
-variable "subnet_type" {
-  description = "Choose between private and public subnets"
-  default     = "Public Subnet"
-  #or
-  #default     = "Private Subnet"
-}
-
-variable "subnet_id" {
-  default = ""
-}
-
-variable "subnet_display_name" {
-  description = "Subnet Name"
-  default     = "simple-subnet"
-}
-
-variable "subnet_cidr_block" {
-  description = "Subnet CIDR"
-  default     = "10.0.0.0/24"
-}
-
-variable "subnet_dns_label" {
-  description = "Subnet DNS Label"
-  default     = "simplesubnet"
-}
-
-############################
-# Security Configuration #
-############################
-variable "nsg_display_name" {
-  description = "Network Security Group Name"
-  default     = "simple-network-security-group"
-}
-
-variable "nsg_source_cidr" {
-  description = "Allowed Ingress Traffic (CIDR Block)"
-  default     = "0.0.0.0/0"
-}
-
-variable "nsg_ssh_port" {
-  description = "SSH Port"
-  default     = 22
-}
-
-variable "nsg_https_port" {
-  description = "HTTPS Port"
-  default     = 443
-}
-
-variable "nsg_http_port" {
-  description = "HTTP Port"
-  default     = 80
-}
-
-############################
-# Additional Configuration #
-############################
-
-variable "compute_compartment_ocid" {
-  description = "Compartment where Compute and Marketplace subscription resources will be created"
-}
-
-variable "network_compartment_ocid" {
-  description = "Compartment where Network resources will be created"
-}
-
-variable "tag_key_name" {
-  description = "Free-form tag key name"
-  default     = "oracle-quickstart"
-}
-
-variable "tag_value" {
-  description = "Free-form tag value"
-  default     = "oci-quickstart-template"
-}
-
-
-######################
-#    Enum Values     #
-######################
-variable "network_strategy_enum" {
+// See https://docs.us-phoenix-1.oraclecloud.com/images/
+// Oracle-provided image "Oracle-Linux-7.7-2019.12.18-0"
+// Kernel Version: 4.14.35-1902.8.4
+variable "InstanceImageOCID" {
   type = map
   default = {
-    CREATE_NEW_VCN_SUBNET   = "Create New VCN and Subnet"
-    USE_EXISTING_VCN_SUBNET = "Use Existing VCN and Subnet"
+    ap-mumbai-1 = "ocid1.image.oc1.ap-mumbai-1.aaaaaaaaka7f3qhfuobx2s7dqfgbcx5klllh5xlflbgzb5pymqsnuphehk2a"
+    ap-seoul-1 = "ocid1.image.oc1.ap-seoul-1.aaaaaaaaw52bcejclqwpqchgfx7fhuj4f4smruqxdywwn3uy2xhmhh6bzpza"
+    ap-sydney-1 = "ocid1.image.oc1.ap-sydney-1.aaaaaaaazy24niulp5e5a5oyaadjrwnwoa2g6f2hay2f26dqy63pn5sljjma"
+    ap-tokyo-1 = "ocid1.image.oc1.ap-tokyo-1.aaaaaaaarl7op6ken6hpevfwuevfnt6ic3tlhitu7pct2py5uxdzyvqb5mkq"
+    ca-toronto-1 = "ocid1.image.oc1.ca-toronto-1.aaaaaaaa6wg3hkw7qxwgysuv5c3fuhtyau5cps4ktmjgxvdtxk6ajtf23fcq"
+    eu-frankfurt-1 = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaalljvzqt3aw7cwpls3oqx7dyrcuntqfj6xn3a2ul3jiuby27lqdxa"
+    eu-zurich-1 = "ocid1.image.oc1.eu-zurich-1.aaaaaaaaf2fwfgbpxz2g3boettl3q6tow7efs34v2t2t5r45yuydvkqm32ha"
+    sa-saopaulo-1 = "ocid1.image.oc1.sa-saopaulo-1.aaaaaaaatwrc37cesjtgx3gm4vzq6ocpedgzxjystewc2a7stnv2ydcoiquq"
+    uk-london-1 = "ocid1.image.oc1.uk-london-1.aaaaaaaagwdcgcw4squjusjy4yoyzxlewn6omj75f2xur2qpo7dgwexnzyhq"
+    us-ashburn-1 = "ocid1.image.oc1.iad.aaaaaaaaxrcvnpfxfsyzv3ytuu6swalnbmocneej6yj4nr4vbcoufgmfpwqq"
+    us-langley-1 = "ocid1.image.oc2.us-langley-1.aaaaaaaa4uyl37ircuup36ju2l4edrzzjexzvtmzay4yh6bhhgixeojxwo7a"
+    us-luke-1 = "ocid1.image.oc2.us-luke-1.aaaaaaaavm4i5dq7m3rvetcgp6ph3gr7if5ew7kmcxvafhgo3hgbw6d2shda"
+    us-phoenix-1 = "ocid1.image.oc1.phx.aaaaaaaactxf4lnfjj6itfnblee3g3uckamdyhqkwfid6wslesdxmlukqvpa"
   }
 }
 
-variable "subnet_type_enum" {
+variable "oci_service_gateway" {
   type = map
   default = {
-    PRIVATE_SUBNET = "Private Subnet"
-    PUBLIC_SUBNET  = "Public Subnet"
-  }
-}
-
-variable "nsg_config_enum" {
-  type = map
-  default = {
-    BLOCK_ALL_PORTS = "Block all ports"
-    OPEN_ALL_PORTS  = "Open all ports"
-    CUSTOMIZE       = "Customize ports - Post deployment"
+    ap-mumbai-1 = "all-bom-services-in-oracle-services-network"
+    ap-seoul-1 = "all-icn-services-in-oracle-services-network"
+    ap-sydney-1 = "all-syd-services-in-oracle-services-network"
+    ap-tokyo-1 = "all-nrt-services-in-oracle-serviecs-network"
+    ca-toronto-1 = "all-yyz-services-in-oracle-services-network"
+    eu-frankfurt-1 = "all-fra-services-in-oracle-services-network"
+    eu-zurich-1 = "all-zrh-services-in-oracle-services-network"
+    sa-saopaulo-1 = "all-gru-services-in-oracle-services-network"
+    uk-london-1 = "all-lhr-services-in-oracle-services-network"
+    us-ashburn-1 = "all-iad-services-in-oracle-services-network"
+    us-langley-1 = "all-lfi-services-in-oracle-services-network"
+    us-luke-1 = "all-luf-services-in-oracle-services-network"
+    us-phoenix-1 = "all-phx-services-in-oracle-services-network"
   }
 }

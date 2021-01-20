@@ -1,0 +1,295 @@
+title: Sample input variable schema
+schemaVersion: 1.0.0
+version: "20200102"
+locale: "en"
+groupings:
+- title: "SSH Configuration"
+  variables:
+  - ${ssh_public_key}
+  - ${ssh_private_key}
+- title: "Availabilty Domain"
+  variables:
+  - ${availability_domain}
+- title: "VCN Options"
+  variables:
+  - ${VPC_CIDR}
+  - ${vcn_dns_label}
+  - ${useExistingVcn}
+  - ${hide_public_subnet}
+  - ${hide_private_subnet}
+- title: "Custom VCN"
+  variables:
+  - ${myVcn}
+  visibility: ${useExistingVcn}
+- title: "Spark Options"
+  variables:
+  - ${build_mode}
+- title: "Hadoop Integration Options"
+  variables:
+  - ${hadoop_version}
+  - ${use_hive}
+  visible:
+    and:
+      - eq:
+        - ${build_mode}
+        - "Hadoop"
+      - and:
+        - not: 
+          - eq:
+            - ${build_mode}
+            - "Stand Alone"
+        - not:
+          - eq:
+            - ${build_mode}
+            - "Mesos"
+        - not:
+          - eq:
+            - ${build_mode}
+            - "Kubernetes"
+- title: "Mesos Integration Options"
+  variables:
+  - ${use_hive}
+  visible:
+    and:
+      - eq:
+        - ${build_mode}
+        - "Mesos"
+      - and:
+        - not:
+          - eq:
+            - ${build_mode}
+            - "Stand Alone"
+        - not:
+          - eq:
+            - ${build_mode}
+            - "Hadoop"
+        - not:
+          - eq:
+            - ${build_mode}
+            - "Kubernetes"
+- title: "Spark Worker Options"
+  variables:
+  - ${worker_instance_shape}
+  - ${worker_node_count}
+  - ${privateSubnet}
+  - ${enable_block_volumes}
+- title: "Worker Block Volumes"
+  variables:
+  - ${block_volumes_per_worker}
+  - ${data_blocksize_in_gbs}
+  visible: ${enable_block_volumes}
+- title: "Spark Master Options"
+  variables:
+  - ${master_instance_shape}
+  - ${publicSubnet}
+
+- title: "Pre-Defined"
+  variables:
+  - ${region}
+  - ${compartment_ocid}
+  - ${tenancy_ocid}
+  - ${InstanceImageOCID}
+  - ${oci_service_gateway}
+  - ${AD}
+  visible: false
+
+variables:
+  useExistingVcn:
+    type: boolean 
+    title: "Use Existing VCN"
+    description: "Click to use existing VCN, otherwise VCN and Subnets will be created"
+    required: true
+
+  myVcn:
+    type: oci:core:vcn:id
+    title: "Existing VCN"
+    description: "Select Existing VCN"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    visible: ${useExistingVcn}
+    required: true
+     
+  publicSubnet:
+    type: oci:core:subnet:id
+    title: "Public Subnet"
+    description: "Select Subnet - Ensure the Subnet is in the same Availability Domain selected above"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      vcnId: ${myVcn}
+      hidePrivateSubnet: ${hide_private_subnet}
+    visible: ${useExistingVcn}
+    required: true
+
+  privateSubnet:
+    type: oci:core:subnet:id
+    title: "Private Subnet"
+    description: "Select Subnet - Ensure the Subnet is in the same Availability Domain selected above"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      vcnId: ${myVcn}
+      hidePublicSubnet: ${hide_public_subnet}
+    visible: ${useExistingVcn}
+    required: true
+
+  hide_private_subnet:
+    type: boolean
+    title: "Deploy Utility & Edge hosts to Public Networks"
+    description: "If you wish to deploy to private networks and use VPN, un-check this"
+    default: true
+    visible: ${useExistingVcn}
+
+  hide_public_subnet:
+    type: boolean
+    title: "Deploy Cluster to Private Network Only"
+    description: "This is highly suggested, disable at your own risk"
+    default: true
+    visible: ${useExistingVcn}
+
+  availability_domain:
+    type: oci:identity:availabilitydomain:name 
+    title: "Availability Domain"
+    description: "Select AD"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    required: true
+
+  worker_instance_shape:
+    type: enum
+    enum:
+    - "VM.Standard2.1"
+    - "VM.Standard2.2"
+    - "VM.Standard2.4"
+    - "VM.Standard2.8"
+    - "VM.Standard2.16"
+    - "VM.Standard2.24"
+    - "VM.Standard.E2.1.Micro"
+    - "VM.Standard.E2.1"
+    - "VM.Standard.E2.2"
+    - "VM.Standard.E2.4"
+    - "VM.Standard.E2.8"
+    - "VM.GPU2.1"
+    - "VM.GPU3.1"
+    - "VM.GPU3.2"
+    - "VM.GPU3.4"
+    - "VM.DenseIO2.8"
+    - "VM.DenseIO2.16"
+    - "VM.DenseIO2.24"
+    - "BM.DenseIO2.52"
+    - "BM.Standard.B1.44"
+    - "BM.Standard2.52"
+    - "BM.Standard.E2.64"
+    - "BM.GPU2.2"
+    - "BM.GPU3.8"
+    - "BM.HPC2.36"
+    title: "Shape of Spark Worker Nodes"
+    required: true
+
+  worker_node_count:
+    type: integer
+    minimum: 1 
+    title: "Number of Worker Nodes"
+    description: "1 is the minimum requirement"
+    required: true
+
+  master_instance_shape:
+    type: enum
+    enum:
+    - "VM.Standard2.1"
+    - "VM.Standard2.2"
+    - "VM.Standard2.4"
+    - "VM.Standard2.8"
+    - "VM.Standard2.16"
+    - "VM.Standard2.24"
+    - "VM.Standard.E2.1.Micro"
+    - "VM.Standard.E2.1"
+    - "VM.Standard.E2.2"
+    - "VM.Standard.E2.4"
+    - "VM.Standard.E2.8"
+    - "VM.GPU2.1"
+    - "VM.GPU3.1"
+    - "VM.GPU3.2"
+    - "VM.GPU3.4"
+    - "VM.DenseIO2.8"
+    - "VM.DenseIO2.16"
+    - "VM.DenseIO2.24"
+    - "BM.DenseIO2.52"
+    - "BM.Standard.B1.44"
+    - "BM.Standard2.52"
+    - "BM.Standard.E2.64"
+    - "BM.GPU2.2"
+    - "BM.GPU3.8"
+    - "BM.HPC2.36"
+    title: "Shape of Master Nodes"
+    required: true
+
+  ssh_public_key:
+    type: string
+    title: "SSH Public Key"
+    description: "Copy/Paste the contents of your SSH Public Key"
+    required: true
+
+  ssh_private_key:
+    type: string
+    title: "SSH Private Key"
+    description: "Copy/Paste the contents of your SSH Private Key"
+    required: true
+
+  data_blocksize_in_gbs:
+    type: integer
+    title: "Worker Block Volume Size ( GB )"
+    description: "1 to 32,768 "
+    minimum: 1
+    maximum: 32768
+    required: true
+
+  block_volumes_per_worker:
+    type: integer
+    title: "Number of Block Volumes per Worker"
+    description: "0 to 32"
+    default: 0
+    minimum: 0
+    maximum: 32
+    required: true
+
+  VPC_CIDR:
+    type: string
+    title: "VPC CIDR for VCN"
+    description: "Customize VCN top level CIDR"
+
+  vcn_dns_label:
+    type: string
+    title: "VCN DNS Label"
+    description: "Set the VCN DNS label to be used when creating VCN."
+
+  build_mode:
+    type: enum
+    title: "Spark Build Mode Options"
+    enum:
+    - "Stand Alone"
+    - "Hadoop"
+    - "Mesos"
+    - "Kubernetes"
+    default: "Stand Alone"
+    description: "Pick which build integration option you want." 
+
+  use_hive:
+    type: boolean
+    title: "Hive/JCBC Integration"
+    default: false
+    description: "Check to enable Hive/JDBC integration"
+
+  hadoop_version:
+    type: enum
+    title: "Hadoop Version"
+    enum:
+    - "2.6.x"
+    - "2.7.x"
+    default: "2.7.x"
+    description: "Pick which Hadoop version to support"
+
+  enable_block_volumes:
+    type: boolean
+    title: "Enable Block Volumes"
+    default: false
+    description: "Enable additonal Block Volume capacity on Spark Workers"
+

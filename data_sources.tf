@@ -1,19 +1,21 @@
-data "oci_identity_availability_domain" "ad" {
+data "oci_identity_availability_domains" "ADs" {
   compartment_id = var.tenancy_ocid
-  ad_number      = var.availability_domain_number
 }
 
-data "oci_core_images" "autonomous_ol7" {
-  compartment_id   = var.compute_compartment_ocid
-  operating_system = "Oracle Autonomous Linux"
-  sort_by          = "TIMECREATED"
-  sort_order       = "DESC"
-  state            = "AVAILABLE"
+data "oci_core_vcn" "vcn_info" {
+  vcn_id = var.useExistingVcn ? var.myVcn : module.network.vcn-id
+}
 
-  # filter restricts to OL 7
-  filter {
-    name   = "operating_system_version"
-    values = ["7\\.[0-9]"]
-    regex  = true
+data "oci_core_subnet" "private_subnet" {
+  subnet_id = var.useExistingVcn ? var.privateSubnet : module.network.private-id
+}
+
+data "oci_core_subnet" "public_subnet" {
+  subnet_id = var.useExistingVcn ? var.publicSubnet : module.network.public-id
+}
+
+data "null_data_source" "values" {
+  inputs = {
+    spark_default = "spark-master.${data.oci_core_subnet.public_subnet.dns_label}.${data.oci_core_vcn.vcn_info.vcn_domain_name}"
   }
 }

@@ -1,43 +1,37 @@
-resource "oci_core_instance" "simple-vm" {
-  availability_domain = local.availability_domain
-  compartment_id      = var.compute_compartment_ocid
-  display_name        = var.vm_display_name
-  shape               = var.vm_compute_shape
+module "master" {
+  source                = "./modules/master"
+	region                = var.region
+	compartment_ocid      = var.compartment_ocid
+  subnet_id             = var.useExistingVcn ? var.publicSubnet : module.network.public-id
+	availability_domain   = var.availablity_domain_name
+  image_ocid            = var.InstanceImageOCID[var.region]
+  ssh_public_key        = tls_private_key.public_private_key_pair.public_key_openssh 
+  ssh_private_key       = tls_private_key.public_private_key_pair.private_key_pem
+  master_instance_shape = var.master_instance_shape
+  user_data             = base64encode(file("scripts/boot.sh"))
+	spark_master          = data.null_data_source.values.outputs["spark_default"]
+	build_mode            = var.build_mode
+	hadoop_version        = var.hadoop_version
+	use_hive              = var.use_hive
+}
 
-  dynamic "shape_config" {
-    for_each = local.is_flex_shape
-      content {
-        ocpus = shape_config.value
-      }
-  }
-
-
-  create_vnic_details {
-    subnet_id              = local.use_existing_network ? var.subnet_id : oci_core_subnet.simple_subnet[0].id
-    display_name           = var.subnet_display_name
-    assign_public_ip       = local.is_public_subnet
-    hostname_label         = var.hostname_label
-    skip_source_dest_check = false
-    nsg_ids                = [oci_core_network_security_group.simple_nsg.id]
-  }
-
-  source_details {
-    source_type = "image"
-    source_id   = local.platform_image_id
-    #use a marketplace image or custom image:
-    #source_id   = local.compute_image_id
-  }
-
-  lifecycle {
-    ignore_changes = [
-      source_details[0].source_id
-    ]
-  }
-  
-  metadata = {
-    ssh_authorized_keys = var.ssh_public_key
-    user_data           = base64encode(file("./scripts/example.sh"))
-  }
-
-  freeform_tags = map(var.tag_key_name, var.tag_value)
+module "worker" {
+  source                   = "./modules/worker"
+  instances                = var.worker_node_count
+	region                   = var.region
+	compartment_ocid         = var.compartment_ocid
+  subnet_id                = var.useExistingVcn ? var.privateSubnet : module.network.private-id
+	availability_domain      = var.availablity_domain_name
+	image_ocid               = var.InstanceImageOCID[var.region]
+  ssh_public_key           = tls_private_key.public_private_key_pair.public_key_openssh 
+  ssh_private_key          = tls_private_key.public_private_key_pair.private_key_pem
+  worker_instance_shape    = var.worker_instance_shape
+	block_volumes_per_worker = var.block_volumes_per_worker
+	data_blocksize_in_gbs    = var.data_blocksize_in_gbs
+  user_data                = base64encode(file("scripts/boot.sh"))
+	spark_master             = data.null_data_source.values.outputs["spark_default"]
+	block_volume_count       = var.block_volumes_per_worker
+  build_mode               = var.build_mode
+  hadoop_version           = var.hadoop_version
+  use_hive                 = var.use_hive
 }
