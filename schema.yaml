@@ -25,83 +25,45 @@ variableGroups:
 - title: Optional Configuration
   visible: true
   variables:  
+  - data_blocksize_in_gbs  
+  - block_volumes_per_worker
+  - enable_block_volumes
   - VCN_CIDR
   - vcn_dns_label
-  - useExistingVcn
-  - hide_public_subnet
-  - hide_private_subnet
-  - myVcn
-  - privateSubnet
-  - enable_block_volumes
-  - block_volumes_per_worker
-  - data_blocksize_in_gbs
-  - publicSubnet
+  - build_mode
+  - use_hive
+  - hadoop_version
+
 
 variables:
 
-  useExistingVcn:
-    type: boolean 
-    title: "Use Existing VCN"
-    description: "Click to use existing VCN, otherwise VCN and Subnets will be created"
-    required: false
-    visible: false
-
-  myVcn:
-    type: oci:core:vcn:id
-    title: "Existing VCN"
-    description: "Select Existing VCN"
-    dependsOn:
-      compartmentId: ${compartment_ocid}
-    visible: ${useExistingVcn}
-    required: false
-    visible: false
-     
-  publicSubnet:
-    type: oci:core:subnet:id
-    title: "Public Subnet"
-    description: "Select Subnet - Ensure the Subnet is in the same Availability Domain selected above"
-    dependsOn:
-      compartmentId: ${compartment_ocid}
-      vcnId: ${myVcn}
-      hidePrivateSubnet: ${hide_private_subnet}
-    visible: ${useExistingVcn}
-    required: false
-    visible: false
-
-  privateSubnet:
-    type: oci:core:subnet:id
-    title: "Private Subnet"
-    description: "Select Subnet - Ensure the Subnet is in the same Availability Domain selected above"
-    dependsOn:
-      compartmentId: ${compartment_ocid}
-      vcnId: ${myVcn}
-      hidePublicSubnet: ${hide_public_subnet}
-    visible: ${useExistingVcn}
-    required: false
-    visible: false
-
-  hide_private_subnet:
-    type: boolean
-    title: "Deploy Utility & Edge hosts to Public Networks"
-    description: "If you wish to deploy to private networks and use VPN, un-check this"
-    default: true
-    visible: ${useExistingVcn}
-    required: false
-
-  hide_public_subnet:
-    type: boolean
-    title: "Deploy Cluster to Private Network Only"
-    description: "This is highly suggested, disable at your own risk"
-    default: true
-    visible: ${useExistingVcn}
-    required: false
-
-  availability_domain:
+  availablity_domain_name:
     type: oci:identity:availabilitydomain:name 
     title: "Availability Domain"
     description: "Select Availability Domain for your Apache Spark deployment"
     dependsOn:
       compartmentId: ${compartment_ocid}
+    required: true
+
+  compartment_ocid:
+    type: oci:identity:compartment:id
+    required: true
+    visibile: true
+    title: "Compartment"
+    description: "Compartment where your Apache Spark will be deployed."
+
+  region:
+    type: oci:identity:region:name
+    required: true
+    visibile: false
+    title: "Region"
+    description: "Choose Region where your Apache Spark will be deployed."
+
+  master_instance_shape:
+    type: oci:core:instanceshape:name
+    default: "VM.Standard2.1"
+    title: "Master Node Shape"
+    description: "Choose shape for Master Node"
     required: true
 
   worker_instance_shape:
@@ -116,13 +78,6 @@ variables:
     minimum: 1 
     title: "Number of Worker Nodes"
     description: "1 is the minimum requirement"
-    required: true
-
-  master_instance_shape:
-    type: oci:core:instanceshape:name
-    default: "VM.Standard2.1"
-    title: "Master Node Shape"
-    description: "Choose shape for Master Node"
     required: true
 
   data_blocksize_in_gbs:
@@ -141,6 +96,12 @@ variables:
     minimum: 0
     maximum: 32
     required: true
+    
+  enable_block_volumes:
+    type: boolean
+    title: "Enable Block Volumes"
+    default: false
+    description: "Enable additonal Block Volume capacity on Spark Workers"
 
   VCN_CIDR:
     type: string
@@ -178,10 +139,4 @@ variables:
       - "2.7.x"
     default: "2.7.x"
     description: "Pick which Hadoop version to support"
-
-  enable_block_volumes:
-    type: boolean
-    title: "Enable Block Volumes"
-    default: false
-    description: "Enable additonal Block Volume capacity on Spark Workers"
 
