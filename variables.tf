@@ -51,7 +51,6 @@ variable "enable_block_volumes" {
 }
 
 variable "worker_instance_shape" {
-#  default = "BM.Standard2.52"
   default = "VM.Standard2.1"
 }
 
@@ -68,7 +67,6 @@ variable "block_volumes_per_worker" {
 }
 
 variable "master_instance_shape" {
-#  default = "BM.Standard2.52"
   default = "VM.Standard2.1"
 }
 
