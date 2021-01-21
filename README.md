@@ -79,7 +79,7 @@ Run the following commands:
 
 ### Testing your Deployment
 
-This deployment compiles from source, as such it does take some time after deployment before the Spark UI is available.  You can monitor progress on the Spark Master by watching the log file /var/log/spark-OCI-initialize.log:
+This deployment compiles from source, as such it does take some time (15-20 minutes) after deployment before the Spark UI is available.  You can monitor progress on the Spark Master by watching the log file /var/log/spark-OCI-initialize.log:
 
 	sudo tail -n 500 -f /var/log/spark-OCI-initialize.log
 
