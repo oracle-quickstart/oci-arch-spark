@@ -12,6 +12,7 @@ variableGroups:
   visible: false
   variables:
   - tenancy_ocid
+  - region
 
 - title: Required Configuration
   visible: true  
@@ -33,7 +34,14 @@ variableGroups:
   - build_mode
   - use_hive
   - hadoop_version
-
+  - useExistingVcn
+  - hide_public_subnet
+  - hide_private_subnet
+  - myVcn
+  - privateSubnet
+  - publicSubnet
+  - InstanceImageOCID
+  - oci_service_gateway
 
 variables:
 
@@ -65,6 +73,8 @@ variables:
     title: "Master Node Shape"
     description: "Choose shape for Master Node"
     required: true
+    dependsOn:
+      compartmentId: ${compartment_ocid}
 
   worker_instance_shape:
     type: oci:core:instanceshape:name
@@ -72,6 +82,8 @@ variables:
     title: "Spark Worker Nodes Shape"
     description: "Choose shape for Spark Worker Nodes."
     required: true
+    dependsOn:
+      compartmentId: ${compartment_ocid}
 
   worker_node_count:
     type: integer
@@ -96,7 +108,7 @@ variables:
     minimum: 0
     maximum: 32
     required: true
-    
+
   enable_block_volumes:
     type: boolean
     title: "Enable Block Volumes"
@@ -139,4 +151,66 @@ variables:
       - "2.7.x"
     default: "2.7.x"
     description: "Pick which Hadoop version to support"
+
+  useExistingVcn:
+    type: boolean
+    title: "Already existing VCN"
+    visible: false
+    required: false
+
+  hide_public_subnet:
+    type: boolean
+    title: "Hide Public subnet"
+    visible: false
+    required: false
+
+  hide_private_subnet:
+    type: boolean
+    title: "Hide Private subnet"
+    visible: false
+    required: false
+
+  myVcn:
+    type: string
+    title: "My Already existing VCN"
+    visible: false
+    required: false
+
+  privateSubnet:
+    type: string
+    title: "Private Subnet"
+    visible: false
+    required: false
+
+  publicSubnet:
+    type: string
+    title: "Public Subnet"
+    visible: false
+    required: false
+
+  InstanceImageOCID:
+    type: string
+    title: "InstanceImageOCID"
+    visible: false
+    required: false
+
+  oci_service_gateway:
+    type: string
+    title: "oci_service_gateway"
+    visible: false
+    required: false
+
+outputs:
+
+  spark_manager_url:
+    title: "Spark Manager URL"
+    displayText: "Spark Manager URL"
+    type: copyableString
+    visible: true
+
+  generated_ssh_private_key:
+    title: "Generated SSH Private Key"
+    displayText: "Generated SSH Private Key"
+    type: copyableString
+    visible: true
 
