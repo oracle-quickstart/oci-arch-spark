@@ -18,26 +18,27 @@ variableGroups:
   variables:
   - compartment_ocid
   - availablity_domain_name
+  - master_instance_shape
+  - worker_instance_shape
+  - worker_node_count
 
 - title: Optional Configuration
   visible: true
   variables:  
-  - VPC_CIDR
+  - VCN_CIDR
   - vcn_dns_label
   - useExistingVcn
   - hide_public_subnet
   - hide_private_subnet
   - myVcn
-  - worker_instance_shape
-  - worker_node_count
   - privateSubnet
   - enable_block_volumes
   - block_volumes_per_worker
   - data_blocksize_in_gbs
-  - master_instance_shape
   - publicSubnet
 
 variables:
+
   useExistingVcn:
     type: boolean 
     title: "Use Existing VCN"
@@ -156,10 +157,10 @@ variables:
     type: enum
     title: "Spark Build Mode Options"
     enum:
-    - "Stand Alone"
-    - "Hadoop"
-    - "Mesos"
-    - "Kubernetes"
+      - "Stand Alone"
+      - "Hadoop"
+      - "Mesos"
+      - "Kubernetes"
     default: "Stand Alone"
     description: "Pick which build integration option you want." 
 
@@ -173,8 +174,8 @@ variables:
     type: enum
     title: "Hadoop Version"
     enum:
-    - "2.6.x"
-    - "2.7.x"
+      - "2.6.x"
+      - "2.7.x"
     default: "2.7.x"
     description: "Pick which Hadoop version to support"
 
