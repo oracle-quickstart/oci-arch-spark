@@ -4,6 +4,7 @@ resource "oci_core_vcn" "spark_vcn" {
   compartment_id = var.compartment_ocid
   display_name   = "spark_vcn"
   dns_label      = var.vcn_dns_label
+  defined_tags   = var.defined_tags
 }
 
 resource "oci_core_internet_gateway" "spark_internet_gateway" {
@@ -11,6 +12,7 @@ resource "oci_core_internet_gateway" "spark_internet_gateway" {
   compartment_id = var.compartment_ocid
   display_name   = "spark_internet_gateway"
   vcn_id         = var.useExistingVcn ? var.custom_vcn[0] : oci_core_vcn.spark_vcn.0.id
+  defined_tags   = var.defined_tags
 }
 
 resource "oci_core_nat_gateway" "nat_gateway" {
@@ -18,6 +20,7 @@ resource "oci_core_nat_gateway" "nat_gateway" {
   compartment_id = var.compartment_ocid
   vcn_id         = var.useExistingVcn ? var.custom_vcn[0] : oci_core_vcn.spark_vcn.0.id
   display_name   = "nat_gateway"
+  defined_tags   = var.defined_tags
 }
 
 resource "oci_core_service_gateway" "spark_service_gateway" {
@@ -28,6 +31,7 @@ resource "oci_core_service_gateway" "spark_service_gateway" {
   }
   vcn_id = var.useExistingVcn ? var.custom_vcn[0] : oci_core_vcn.spark_vcn.0.id
   display_name = "Cloudera Service Gateway"
+  defined_tags   = var.defined_tags
 }
 
 resource "oci_core_route_table" "RouteForComplete" {
@@ -35,6 +39,7 @@ resource "oci_core_route_table" "RouteForComplete" {
   compartment_id = var.compartment_ocid
   vcn_id         = var.useExistingVcn ? var.custom_vcn[0] : oci_core_vcn.spark_vcn.0.id
   display_name   = "RouteTableForComplete"
+  defined_tags   = var.defined_tags
 
   route_rules {
     destination       = "0.0.0.0/0"
@@ -48,6 +53,7 @@ resource "oci_core_route_table" "private" {
   compartment_id = var.compartment_ocid
   vcn_id         = var.useExistingVcn ? var.custom_vcn[0] : oci_core_vcn.spark_vcn.0.id
   display_name   = "private"
+  defined_tags   = var.defined_tags
 
   route_rules {
       destination       = var.oci_service_gateway
@@ -67,6 +73,7 @@ resource "oci_core_security_list" "PublicSubnet" {
   compartment_id = var.compartment_ocid
   display_name   = "Public Subnet"
   vcn_id         = var.useExistingVcn ? var.custom_vcn[0] : oci_core_vcn.spark_vcn.0.id
+  defined_tags   = var.defined_tags
 
   egress_security_rules {
     destination = "0.0.0.0/0"
@@ -102,6 +109,7 @@ resource "oci_core_security_list" "PrivateSubnet" {
   compartment_id = var.compartment_ocid
   display_name   = "Private"
   vcn_id         = var.useExistingVcn ? var.custom_vcn[0] : oci_core_vcn.spark_vcn.0.id
+  defined_tags   = var.defined_tags
 
   egress_security_rules {
     destination = "0.0.0.0/0"
@@ -129,6 +137,7 @@ resource "oci_core_subnet" "public" {
   security_list_ids   = [oci_core_security_list.PublicSubnet.*.id[count.index]]
   dhcp_options_id     = oci_core_vcn.spark_vcn[count.index].default_dhcp_options_id
   dns_label           = "public"
+  defined_tags        = var.defined_tags
 }
 
 resource "oci_core_subnet" "private" {
@@ -143,5 +152,6 @@ resource "oci_core_subnet" "private" {
   dhcp_options_id     = oci_core_vcn.spark_vcn[count.index].default_dhcp_options_id
   prohibit_public_ip_on_vnic = "true"
   dns_label           = "private"
+  defined_tags        = var.defined_tags
 }
 

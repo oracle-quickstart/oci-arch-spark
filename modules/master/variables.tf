@@ -36,7 +36,13 @@ variable "master_instance_shape" {
   default = "BM.Standard2.52"
 }
 
+variable "defined_tags" {
+  description = "Defined tags for Spark Master node."
+  default     = ""
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # Constants
 # You probably don't need to change these.
 # ---------------------------------------------------------------------------------------------------------------------
+

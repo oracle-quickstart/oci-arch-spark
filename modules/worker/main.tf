@@ -5,6 +5,7 @@ resource "oci_core_instance" "Worker" {
   shape               = var.worker_instance_shape
   display_name        = "Spark Worker ${format("%01d", count.index+1)}"
   fault_domain        = "FAULT-DOMAIN-${(count.index%3)+1}"
+  defined_tags        = var.defined_tags
 
   source_details {
     source_type             = "image"
@@ -40,6 +41,7 @@ resource "oci_core_volume" "WorkerDataVolume" {
   compartment_id      = var.compartment_ocid
   display_name        = "Spark Worker ${format("%01d", floor((count.index / var.block_volumes_per_worker)+1))} HDFS Data ${format("%01d", floor((count.index%(var.block_volumes_per_worker))+1))}"
   size_in_gbs         = var.data_blocksize_in_gbs
+  defined_tags        = var.defined_tags
 }
 
 resource "oci_core_volume_attachment" "WorkerDataAttachment" {

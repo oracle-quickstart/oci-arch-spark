@@ -42,6 +42,7 @@ variableGroups:
   - publicSubnet
   - InstanceImageOCID
   - oci_service_gateway
+  - release
 
 variables:
 
@@ -199,6 +200,12 @@ variables:
     title: "oci_service_gateway"
     visible: false
     required: false
+    
+  release:
+    type: string
+    required: false
+    visible: false
+    title: "Reference Architecture Release (OCI Architecture Center)"
 
 outputs:
 

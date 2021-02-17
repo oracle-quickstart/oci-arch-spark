@@ -29,6 +29,11 @@ variable "availability_domain" {
   default = "2"
 }
 
+variable "defined_tags" {
+  description = "Defined tags for Spark Worker nodes."
+  default     = ""
+}
+
 # Number of Workers in the Cluster
 
 variable "worker_node_count" {

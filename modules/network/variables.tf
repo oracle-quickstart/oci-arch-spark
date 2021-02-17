@@ -26,4 +26,9 @@ variable "availability_domain" {
   default = "2"
 }
 
+variable "defined_tags" {
+  description = "Defined tags for cloud infra."
+  default     = ""
+}
+
 

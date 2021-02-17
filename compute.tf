@@ -13,6 +13,7 @@ module "master" {
 	build_mode            = var.build_mode
 	hadoop_version        = var.hadoop_version
 	use_hive              = var.use_hive
+  defined_tags          = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 module "worker" {
@@ -34,4 +35,5 @@ module "worker" {
   build_mode               = var.build_mode
   hadoop_version           = var.hadoop_version
   use_hive                 = var.use_hive
+  defined_tags             = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }

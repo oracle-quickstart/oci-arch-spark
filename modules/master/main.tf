@@ -28,6 +28,7 @@ resource "oci_core_instance" "Master" {
   timeouts {
     create = "30m"
   }
+  defined_tags        = var.defined_tags
 }
 
 

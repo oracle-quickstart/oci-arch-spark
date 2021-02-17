@@ -8,4 +8,5 @@ module "network" {
 	useExistingVcn      = var.useExistingVcn
   VCN_CIDR            = var.VCN_CIDR
 	custom_vcn          = [var.myVcn]
+  defined_tags        = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
