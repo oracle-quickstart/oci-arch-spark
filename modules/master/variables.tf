@@ -19,11 +19,6 @@ variable "build_mode" {}
 variable "hadoop_version" {}
 variable "use_hive" {}
 
-# ---------------------------------------------------------------------------------------------------------------------
-# Optional variables
-# You can modify these.
-# ---------------------------------------------------------------------------------------------------------------------
-
 variable "availability_domain" {
   default = "2"
 }
@@ -36,13 +31,30 @@ variable "master_instance_shape" {
   default = "BM.Standard2.52"
 }
 
+variable "master_flex_shape_ocpus" {
+  default = 1
+}
+
+variable "master_flex_shape_memory" {
+  default = 10
+}
+
 variable "defined_tags" {
   description = "Defined tags for Spark Master node."
   default     = ""
 }
 
-# ---------------------------------------------------------------------------------------------------------------------
-# Constants
-# You probably don't need to change these.
-# ---------------------------------------------------------------------------------------------------------------------
+# Dictionary Locals
+locals {
+  compute_flexible_shapes = [
+    "VM.Standard.E3.Flex",
+    "VM.Standard.E4.Flex",
+    "VM.Optimized3.Flex",
+    "VM.Standard.A1.Flex"
+  ]
+}
 
+# Checks if is using Flexible Compute Shapes
+locals {
+  is_flexible_node_shape = contains(local.compute_flexible_shapes, var.master_instance_shape)
+}

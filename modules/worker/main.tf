@@ -3,6 +3,15 @@ resource "oci_core_instance" "Worker" {
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_ocid
   shape               = var.worker_instance_shape
+
+  dynamic "shape_config" {
+    for_each = local.is_flexible_node_shape ? [1] : []
+    content {
+      memory_in_gbs = var.worker_flex_shape_memory
+      ocpus = var.worker_flex_shape_ocpus
+    }
+  }
+
   display_name        = "Spark Worker ${format("%01d", count.index+1)}"
   fault_domain        = "FAULT-DOMAIN-${(count.index%3)+1}"
   defined_tags        = var.defined_tags

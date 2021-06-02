@@ -246,11 +246,11 @@ else
 fi
 log "->Spark Build Complete"
 EXECNAME="PySpark Install"
-log "->Install Python & Pip"
+log "->Install Python & pip"
 sudo yum install python python-pip -y >> $LOG_FILE
-sudo pip install --upgrade pip >> $LOG_FILE
+sudo pip3 install --upgrade pip >> $LOG_FILE
 log "->Install PySpark"
-sudo pip install pyspark >> $LOG_FILE
+sudo pip3 install pyspark >> $LOG_FILE
 EXECNAME="Spark Worker Start"
 if [ $local_fqdn = $spark_master_fqdn ]; then 
 	log "->Start Spark Master"

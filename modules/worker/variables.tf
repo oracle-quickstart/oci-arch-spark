@@ -57,6 +57,13 @@ variable "worker_instance_shape" {
   default = "BM.Standard2.52"
 }
 
+variable "worker_flex_shape_ocpus" {
+  default = 1
+}
+
+variable "worker_flex_shape_memory" {
+  default = 10
+}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Constants
@@ -97,5 +104,20 @@ variable "data_volume_attachment_device" {
     "27" = "/dev/oracleoci/oraclevdaf"
     "28" = "/dev/oracleoci/oraclevdag"
   }
+}
+
+# Dictionary Locals
+locals {
+  compute_flexible_shapes = [
+    "VM.Standard.E3.Flex",
+    "VM.Standard.E4.Flex",
+    "VM.Optimized3.Flex",
+    "VM.Standard.A1.Flex"
+  ]
+}
+
+# Checks if is using Flexible Compute Shapes
+locals {
+  is_flexible_node_shape = contains(local.compute_flexible_shapes, var.worker_instance_shape)
 }
 

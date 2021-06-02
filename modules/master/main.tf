@@ -2,6 +2,15 @@ resource "oci_core_instance" "Master" {
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_ocid
   shape               = var.master_instance_shape
+
+  dynamic "shape_config" {
+    for_each = local.is_flexible_node_shape ? [1] : []
+    content {
+      memory_in_gbs = var.master_flex_shape_memory
+      ocpus = var.master_flex_shape_ocpus
+    }
+  }
+
   display_name        = "Spark Master"
 
   source_details {
