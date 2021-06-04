@@ -61,6 +61,7 @@ variableGroups:
       and:
         - show_advanced
   variables: 
+  - spark_version
   - build_mode
   - use_hive
   - hadoop_version
@@ -290,6 +291,21 @@ variables:
     title: "Hive/JCBC Integration"
     default: false
     description: "Check to enable Hive/JDBC integration"
+
+  spark_version:
+    type: enum
+    title: "Spark Version"
+    enum:
+      - "3.1.2"
+      - "3.1.1"
+      - "3.0.2"
+      - "3.0.1"
+      - "3.0.0"
+      - "2.4.8"
+      - "2.4.7"
+      - "2.4.6"
+    default: "3.1.2"
+    description: "Pick which Spark version from GitHub repository"
 
   hadoop_version:
     type: enum

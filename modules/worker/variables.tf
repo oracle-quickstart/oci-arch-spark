@@ -20,6 +20,9 @@ variable "hide_public_subnet" {
 variable "build_mode" {}
 variable "hadoop_version" {}
 variable "use_hive" {}
+variable "spark_version" {
+  default = "3.1.2"
+}
 # ---------------------------------------------------------------------------------------------------------------------
 # Optional variables
 # You can modify these.

@@ -9,6 +9,7 @@ spark_master_ip=`host $spark_master_fqdn | gawk '{print $4}'`
 fqdn_fields=`echo -e $spark_master_fqdn | gawk -F '.' '{print NF}'`
 cluster_domain=`echo -e $spark_master_fqdn | cut -d '.' -f 3-${fqdn_fields}`
 hadoop_version=`curl -L http://169.254.169.254/opc/v1/instance/metadata/hadoop_version`
+spark_version=`curl -L http://169.254.169.254/opc/v1/instance/metadata/spark_version`
 build_mode=`curl -L http://169.254.169.254/opc/v1/instance/metadata/build_mode`
 use_hive=`curl -L http://169.254.169.254/opc/v1/instance/metadata/use_hive`
 if [ $local_fqdn = $spark_master_fqdn ]; then 
@@ -202,9 +203,11 @@ fi
 EXECNAME="Spark Install"
 log "->Download Spark master from github"
 cd /opt
-wget https://github.com/apache/spark/archive/master.zip
-unzip master.zip 
-cd spark-master/
+#wget https://github.com/apache/spark/archive/master.zip
+wget https://github.com/apache/spark/archive/refs/tags/v$spark_version.zip
+unzip v$spark_version.zip
+#unzip master.zip 
+cd spark-$spark_version/
 log "->Install Maven"
 yum install maven -y >> $LOG_FILE
 log "->Build Spark with Maven"

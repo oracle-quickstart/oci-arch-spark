@@ -32,6 +32,7 @@ resource "oci_core_instance" "Master" {
     build_mode		      = var.build_mode
     hadoop_version	    = var.hadoop_version
     use_hive		        = var.use_hive
+    spark_version       = var.spark_version
   }
 
   timeouts {

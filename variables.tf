@@ -42,6 +42,10 @@ variable "vcn_dns_label" {
   default = "sparkvcn"
 }
 
+variable "spark_version" {
+  default = "3.1.2"
+}
+
 variable "hadoop_version" {
   default = "2.7.x"
 }
